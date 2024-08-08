@@ -334,6 +334,11 @@ func (ac *Reconciler) reconcileMutatingWebhook(ctx context.Context, caCert []byt
 	if err != nil {
 		return fmt.Errorf("error retrieving webhook: %w", err)
 	}
+	if !configuredWebhook.GetDeletionTimestamp().IsZero() {
+		logging.FromContext(ctx).Debug("MutatingWebhookConfiguration is being deleted")
+		return nil
+	}
+
 	current := configuredWebhook.DeepCopy()
 
 	// Use the "Equivalent" match policy so that we don't need to enumerate versions for same-types.

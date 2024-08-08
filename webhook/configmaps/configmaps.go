@@ -135,6 +135,10 @@ func (ac *reconciler) reconcileValidatingWebhook(ctx context.Context, caCert []b
 	if err != nil {
 		return fmt.Errorf("error retrieving webhook: %w", err)
 	}
+	if !configuredWebhook.GetDeletionTimestamp().IsZero() {
+		logger.Debug("ValidatingWebhookConfiguration is being deleted")
+		return nil
+	}
 
 	webhook := configuredWebhook.DeepCopy()
 

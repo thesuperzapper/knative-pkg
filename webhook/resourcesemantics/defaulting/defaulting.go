@@ -215,6 +215,10 @@ func (ac *reconciler) reconcileMutatingWebhook(ctx context.Context, caCert []byt
 	if err != nil {
 		return fmt.Errorf("error retrieving webhook: %w", err)
 	}
+	if !configuredWebhook.GetDeletionTimestamp().IsZero() {
+		logger.Debug("MutatingWebhookConfiguration is being deleted")
+		return nil
+	}
 
 	current := configuredWebhook.DeepCopy()
 
